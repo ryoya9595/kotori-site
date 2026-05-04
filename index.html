@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ことり AI×占いで夢を叶える！</title>
+  <link rel="icon" href="images/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{font-family:'Noto Sans JP',sans-serif;color:#333;background:#efebe7;line-height:1.8;overflow-x:hidden}
+
+    /* ===== HEADER ===== */
+    .header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(239,235,231,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;padding:12px 40px;transition:box-shadow .3s}
+    .header.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.08)}
+    .header-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#333}
+    .header-logo img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #c9a0dc}
+    .header-nav{display:flex;align-items:center;gap:36px}
+    .header-nav a{text-decoration:none;color:#555;font-size:.9rem;letter-spacing:.05em;transition:color .3s;position:relative}
+    .header-nav a:hover{color:#8b5cf6}
+    .header-nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#8b5cf6;transition:width .3s}
+    .header-nav a:hover::after{width:100%}
+    .header-nav .contact-btn{display:flex;align-items:center;gap:8px;padding:10px 24px;border:1px solid #555;border-radius:0;font-size:.85rem;letter-spacing:.1em;transition:all .3s}
+    .header-nav .contact-btn:hover{background:#8b5cf6;border-color:#8b5cf6;color:#fff}
+    .header-nav .contact-btn::after{display:none}
+
+    /* ===== HERO ===== */
+    .hero{position:relative;height:100vh;display:flex;align-items:center;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a0533 0%,#2d1b69 25%,#44287f 50%,#6b3fa0 75%,#8b5cf6 100%);z-index:0}
+    .hero-bg::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900"><defs><radialGradient id="a" cx="50%25" cy="50%25" r="50%25"><stop offset="0" stop-color="%23fff" stop-opacity=".15"/><stop offset="1" stop-color="%23fff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="300" r="3" fill="%23fff" opacity=".6"/><circle cx="400" cy="100" r="2" fill="%23fff" opacity=".4"/><circle cx="700" cy="200" r="4" fill="%23fff" opacity=".5"/><circle cx="900" cy="400" r="2" fill="%23fff" opacity=".3"/><circle cx="1100" cy="150" r="3" fill="%23fff" opacity=".6"/><circle cx="1300" cy="350" r="2" fill="%23fff" opacity=".4"/><circle cx="300" cy="600" r="3" fill="%23fff" opacity=".5"/><circle cx="600" cy="500" r="2" fill="%23fff" opacity=".3"/><circle cx="1000" cy="600" r="4" fill="%23fff" opacity=".5"/><circle cx="1200" cy="700" r="2" fill="%23fff" opacity=".4"/><circle cx="150" cy="800" r="3" fill="%23fff" opacity=".3"/><circle cx="500" cy="750" r="2" fill="%23fff" opacity=".5"/><circle cx="850" cy="800" r="3" fill="%23fff" opacity=".4"/><circle cx="50" cy="450" r="2" fill="%23fff" opacity=".6"/><circle cx="1400" cy="500" r="3" fill="%23fff" opacity=".3"/></svg>') center/cover no-repeat}
+    .hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(139,92,246,.3) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(196,160,220,.2) 0%,transparent 50%)}
+    .hero-content{position:relative;z-index:1;padding:0 80px;max-width:800px}
+    .hero-title{font-family:'Noto Serif JP',serif;font-size:clamp(2rem,5vw,3.5rem);color:#fff;font-weight:700;line-height:1.4;margin-bottom:24px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+    .hero-title .clover{color:#48c85f;font-size:1.2em}
+    .hero-sub{color:rgba(255,255,255,.85);font-size:clamp(.85rem,1.5vw,1.05rem);margin-bottom:8px;letter-spacing:.02em}
+    .hero-sub.accent{font-size:clamp(.9rem,1.6vw,1.1rem);margin-bottom:20px;color:rgba(255,255,255,.7)}
+    .hero-description{color:rgba(255,255,255,.75);font-size:.95rem;line-height:2}
+    .hero-scroll{position:absolute;bottom:40px;right:60px;color:rgba(255,255,255,.6);font-size:.75rem;letter-spacing:.2em;writing-mode:vertical-rl;z-index:1}
+    .hero-scroll::after{content:'';display:block;width:1px;height:40px;background:rgba(255,255,255,.4);margin:12px auto 0}
+
+    /* ===== BOTTOM NAV BAR ===== */
+    .bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:1px solid #e0d8d0;display:flex}
+    .bottom-bar a{flex:1;text-align:center;padding:14px;text-decoration:none;color:#555;font-size:.85rem;font-weight:500;letter-spacing:.05em;transition:background .3s,color .3s}
+    .bottom-bar a:first-child{border-right:1px solid #e0d8d0}
+    .bottom-bar a:hover{background:#f5f0eb;color:#8b5cf6}
+
+    /* ===== SECTIONS COMMON ===== */
+    section{padding:100px 40px 80px}
+    .section-title{font-family:'Noto Serif JP',serif;font-size:1.8rem;text-align:center;margin-bottom:16px;color:#333;letter-spacing:.05em}
+    .section-subtitle{text-align:center;color:#888;font-size:.9rem;margin-bottom:60px}
+
+    /* ===== WORKSHOP (体験会) ===== */
+    .workshop{background:#fff;padding-bottom:100px}
+    .workshop-card{max-width:700px;margin:0 auto;background:#faf8f5;border-radius:16px;padding:48px;box-shadow:0 4px 30px rgba(0,0,0,.05)}
+    .workshop-card h3{font-family:'Noto Serif JP',serif;font-size:1.3rem;color:#8b5cf6;margin-bottom:24px;text-align:center}
+    .workshop-card p{font-size:.95rem;line-height:2;color:#555;margin-bottom:16px}
+    .workshop-card .notice{background:#fff3e0;border-left:4px solid #ff9800;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:.9rem;color:#6d4c00}
+    .workshop-card .schedule{background:linear-gradient(135deg,#f3e8ff,#ede4ff);border-radius:12px;padding:24px;margin:24px 0}
+    .workshop-card .schedule h4{color:#6b3fa0;margin-bottom:12px;font-size:1rem}
+    .workshop-card .schedule p{margin-bottom:8px;font-size:.9rem}
+    .workshop-card .note{font-size:.8rem;color:#999;margin-top:8px}
+    .cta-button{display:block;max-width:360px;margin:32px auto 0;padding:16px 32px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;text-align:center;text-decoration:none;border-radius:50px;font-size:1rem;font-weight:500;letter-spacing:.05em;box-shadow:0 4px 15px rgba(139,92,246,.3);transition:transform .3s,box-shadow .3s}
+    .cta-button:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(139,92,246,.4)}
+
+    /* ===== LINE INFO ===== */
+    .line-section{background:#efebe7;text-align:center;padding:60px 40px}
+    .line-section h3{font-family:'Noto Serif JP',serif;font-size:1.2rem;margin-bottom:16px;color:#333}
+    .line-section p{font-size:.9rem;color:#666;margin-bottom:8px;line-height:1.8}
+    .line-section .tiktok-note{background:#fff;border-radius:12px;padding:20px;max-width:500px;margin:24px auto 0;font-size:.85rem;color:#e65100;line-height:1.8}
+    .line-button{display:inline-block;margin-top:24px;padding:14px 40px;background:#06C755;color:#fff;text-decoration:none;border-radius:50px;font-weight:500;font-size:.95rem;box-shadow:0 4px 15px rgba(6,199,85,.3);transition:transform .3s}
+    .line-button:hover{transform:translateY(-2px)}
+
+    /* ===== PROFILE ===== */
+    .profile{background:#fff}
+    .profile-inner{max-width:800px;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+    .profile-icon{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid #c9a0dc;margin-bottom:24px;box-shadow:0 4px 20px rgba(139,92,246,.15)}
+    .profile-name{font-family:'Noto Serif JP',serif;font-size:1.5rem;margin-bottom:24px;color:#333}
+    .profile-text{font-size:.95rem;line-height:2.2;color:#555;text-align:left}
+    .profile-text p{margin-bottom:16px}
+
+    /* ===== RESULTS (生徒さん実績) ===== */
+    .results{background:#efebe7}
+    .results-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+    .result-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.05);transition:transform .3s}
+    .result-card:hover{transform:translateY(-4px)}
+    .result-card .card-header{padding:20px 24px;display:flex;align-items:center;gap:12px}
+    .result-card .card-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .result-card .card-number{font-family:'Noto Serif JP',serif;font-size:.8rem;color:#8b5cf6;font-weight:700}
+    .result-card .card-title{font-size:.9rem;font-weight:500;color:#333}
+    .result-card .card-body{padding:0 24px 24px;font-size:.85rem;color:#666;line-height:1.8}
+
+    /* ===== YOUTUBE ===== */
+    .youtube-section{background:#fff;padding:80px 40px}
+    .youtube-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:24px}
+    .youtube-card{background:#faf8f5;border-radius:16px;overflow:hidden;box-shadow:0 2px 15px rgba(0,0,0,.05)}
+    .youtube-card .video-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#2d1b69,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;text-align:center;padding:20px}
+    .youtube-card .video-title{padding:16px 20px;font-size:.85rem;color:#555;line-height:1.6}
+
+    /* ===== FOOTER CTA ===== */
+    .footer-cta{position:relative;padding:80px 40px;text-align:center;background:linear-gradient(135deg,#2d1b69,#6b3fa0);color:#fff;overflow:hidden}
+    .footer-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,255,255,.05) 0%,transparent 70%)}
+    .footer-cta h2{font-family:'Noto Serif JP',serif;font-size:1.6rem;margin-bottom:24px;position:relative;z-index:1;line-height:1.6}
+    .footer-cta .cta-button{position:relative;z-index:1;background:linear-gradient(135deg,#c9a0dc,#e9b8ff);color:#2d1b69}
+
+    /* ===== FOOTER ===== */
+    .footer{background:#1a0533;color:rgba(255,255,255,.5);text-align:center;padding:40px;font-size:.8rem;padding-bottom:80px}
+    .footer a{color:rgba(255,255,255,.5);text-decoration:none}
+
+    /* ===== INSTAGRAM EMBED AREA ===== */
+    .instagram-section{background:#faf8f5;padding:80px 40px;text-align:center}
+    .instagram-section h3{font-family:'Noto Serif JP',serif;font-size:1.3rem;margin-bottom:12px;color:#333}
+    .instagram-section p{font-size:.9rem;color:#888;margin-bottom:32px}
+    .instagram-link{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;background:linear-gradient(135deg,#833AB4,#FD1D1D,#F77737);color:#fff;text-decoration:none;border-radius:50px;font-weight:500;font-size:.95rem;box-shadow:0 4px 15px rgba(131,58,180,.3);transition:transform .3s}
+    .instagram-link:hover{transform:translateY(-2px)}
+
+    /* ===== HIGHLIGHT ITEMS ===== */
+    .highlights{background:#fff;padding:80px 40px}
+    .highlights-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+    .highlight-item{background:linear-gradient(135deg,#faf8f5,#f3e8ff);border-radius:16px;padding:24px;display:flex;align-items:flex-start;gap:16px;transition:transform .3s}
+    .highlight-item:hover{transform:translateY(-3px)}
+    .highlight-num{font-family:'Noto Serif JP',serif;font-size:1.5rem;color:#8b5cf6;font-weight:700;line-height:1;min-width:30px}
+    .highlight-icon{font-size:1.3rem;min-width:30px;text-align:center}
+    .highlight-text{font-size:.85rem;color:#555;line-height:1.7}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:840px){
+      .header{padding:10px 20px}
+      .header-nav{gap:20px}
+      .header-nav a{font-size:.8rem}
+      .header-logo img{width:45px;height:45px}
+      .hero-content{padding:0 30px}
+      section{padding:70px 24px 60px}
+      .workshop-card{padding:32px 24px}
+      .youtube-grid{grid-template-columns:1fr}
+      .results-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:540px){
+      .header{padding:8px 16px}
+      .header-nav{gap:12px}
+      .header-nav a:not(.contact-btn){display:none}
+      .header-nav .contact-btn{padding:8px 16px;font-size:.75rem}
+      .hero-content{padding:0 20px}
+      .hero-title{font-size:1.8rem}
+      section{padding:60px 16px 50px}
+      .workshop-card{padding:24px 16px}
+      .profile-text{font-size:.9rem}
+      .bottom-bar a{font-size:.75rem;padding:12px}
+      .highlights-grid{grid-template-columns:1fr}
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{opacity:0;animation:fadeInUp .8s ease forwards}
+    .fade-in.delay-1{animation-delay:.2s}
+    .fade-in.delay-2{animation-delay:.4s}
+    .fade-in.delay-3{animation-delay:.6s}
+
+    @keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1}}
+    .hero-bg::before{animation:twinkle 4s ease-in-out infinite}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" id="top">
+    <a href="#top" class="header-logo">
+      <img src="images/icon.png" alt="ことり">
+    </a>
+    <nav class="header-nav">
+      <a href="#profile">プロフィール</a>
+      <a href="#workshop">体験会のお知らせ</a>
+      <a href="#results">生徒さん実績</a>
+      <a href="#contact" class="contact-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        CONTACT
+      </a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1 class="hero-title fade-in">ことり<span class="clover">&#127808;</span><br>AI×占いで夢を叶える！</h1>
+      <p class="hero-sub fade-in delay-1">＼ AIを使って おうち時間を有効活用 ／</p>
+      <p class="hero-sub accent fade-in delay-1">AI×占いスキルをお金に変える方法</p>
+      <p class="hero-description fade-in delay-2">AI占いで収益化する方法をインスタグラムで発信中！</p>
+    </div>
+    <div class="hero-scroll">SCROLL</div>
+  </section>
+
+  <!-- 体験会のご案内 -->
+  <section class="workshop" id="workshop">
+    <h2 class="section-title fade-in">「AI×占い」体験会のご案内</h2>
+    <p class="section-subtitle fade-in delay-1">次回体験会開催ご案内</p>
+
+    <div class="workshop-card fade-in delay-2">
+      <h3>ココナラで占いを体験してみよう！</h3>
+
+      <div class="schedule">
+        <h4>体験会お申し込み受付中</h4>
+        <p>体験会は2回に分けて実施します。<br>下記の日程で2回連続で参加できる方のみご応募ください。</p>
+        <p><strong>＜1回目＞</strong>AI×占いってどんなもの？</p>
+        <p><strong>＜2回目＞</strong>AI×占いで収益化ロードマップ</p>
+        <p class="note">※日程は公式LINEにてご案内します</p>
+        <p class="note">※女性フォロワー様限定となります。</p>
+      </div>
+
+      <a href="#" class="cta-button">お申し込みはこちら</a>
+    </div>
+  </section>
+
+  <!-- LINE公式 -->
+  <div class="line-section" id="contact">
+    <h3>ことり公式LINE</h3>
+    <p>体験会のご連絡や最新情報は、公式LINEからご連絡いたします。<br>まずはご登録をお願いします。</p>
+    <div class="tiktok-note">
+      ⚠️ TikTokからご覧いただいている方へ<br>
+      アプリ内ブラウザではLINEを開けないことがあります。<br>
+      ↓のボタンを長押しして「リンクを開く」で追加できます！
+    </div>
+    <br>
+    <a href="#" class="line-button">LINE友だち追加</a>
+  </div>
+
+  <!-- プロフィール -->
+  <section class="profile" id="profile">
+    <h2 class="section-title fade-in">こんにちは！</h2>
+    <p class="section-subtitle fade-in delay-1">はじめまして、ことりです！</p>
+
+    <div class="profile-inner fade-in delay-2">
+      <img src="images/icon.png" alt="ことり" class="profile-icon">
+      <div class="profile-name">ことり</div>
+      <div class="profile-text">
+        <p>AI×占いを活用して、おうちにいながら収益化する方法を発信しています。</p>
+        <p>「なんかもう少し収入を増やせたらな…」とか、「外に働きに行けないけど何かできることないかな？」って考えたこと、ありませんか？</p>
+        <p>私も同じことをずっと思ってたんです。</p>
+        <p>これまでにも色々な副業にチャレンジしてみては失敗の繰り返し。なかなか思うような成果が得られず、諦めかけていた時、私を助けてくれたのがAIです。</p>
+        <p>AIを使っての副業、最初は何から始めたらいいかわからず、ほんとに手探りで始めたけど、コツコツ続ければ必ず結果が出るし、無理なく続けられる方法があるって知って、やっと一歩踏み出せました！</p>
+        <p>だから、もし今あなたも「どうしようかな…」って迷ってるなら、大丈夫。ちょっとずつでいいんです。一緒に新しい一歩を踏み出してみませんか？</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instagram -->
+  <div class="instagram-section">
+    <h3>Instagramで最新情報を発信中</h3>
+    <p>AI×占いの情報をわかりやすくお届けしています</p>
+    <a href="https://www.instagram.com/uranai_ai_kotori/" target="_blank" rel="noopener" class="instagram-link">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      @uranai_ai_kotori
+    </a>
+  </div>
+
+  <!-- 生徒さん実績 -->
+  <section class="results" id="results">
+    <h2 class="section-title fade-in">生徒さんの実績紹介</h2>
+    <p class="section-subtitle fade-in delay-1">ここでは卒業生さんの実績をリアルな本音でご紹介します。</p>
+
+    <div class="highlights-grid fade-in delay-2">
+      <div class="highlight-item">
+        <span class="highlight-num">1</span>
+        <span class="highlight-icon">&#128059;</span>
+        <div class="highlight-text">AIを使って月に10万円を安定して稼いでいる、その手法は・・・</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">2</span>
+        <span class="highlight-icon">&#128054;</span>
+        <div class="highlight-text">初心者でも取り組みやすいおすすめのAI副業</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">3</span>
+        <span class="highlight-icon">&#128737;</span>
+        <div class="highlight-text">ChatGPTではさまざまな種類の占いのスタイルをシミュレートして提供することができますよ！</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">4</span>
+        <span class="highlight-icon">&#128214;</span>
+        <div class="highlight-text">超便利でありがたーいサイトをご紹介しますね</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">5</span>
+        <span class="highlight-icon">&#128049;</span>
+        <div class="highlight-text">ショート動画で収益化が狙えそうなジャンルはこちら</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">6</span>
+        <span class="highlight-icon">&#129302;</span>
+        <div class="highlight-text">AIで+5万円で脱パートができた！</div>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-num">7</span>
+        <span class="highlight-icon">&#128506;</span>
+        <div class="highlight-text">AI副業ロードマップ こっそりお送りしますね</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <div class="footer-cta">
+    <h2>月10万は夢じゃない！<br>【AI×占い】の力で叶えた方法はこちら</h2>
+    <a href="#" class="cta-button">詳しく見る</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 ことり AI×占い All Rights Reserved.</p>
+  </footer>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <a href="#results">生徒さん実績</a>
+    <a href="#workshop">体験会日程</a>
+  </div>
+
+  <script>
+    // Header scroll effect
+    window.addEventListener('scroll',()=>{
+      document.querySelector('.header').classList.toggle('scrolled',window.scrollY>50)
+    })
+
+    // Intersection Observer for fade-in animations
+    const observer=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.style.animationPlayState='running'
+          observer.unobserve(entry.target)
+        }
+      })
+    },{threshold:0.1})
+
+    document.querySelectorAll('.fade-in').forEach(el=>{
+      el.style.animationPlayState='paused'
+      observer.observe(el)
+    })
+
+    // Hero animations play immediately
+    document.querySelectorAll('.hero .fade-in').forEach(el=>{
+      el.style.animationPlayState='running'
+    })
+  </script>
+
+</body>
+</html>
